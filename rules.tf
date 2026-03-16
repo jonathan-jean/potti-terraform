@@ -25,21 +25,7 @@ resource "openstack_networking_secgroup_v2" "bastion_french_only_secgroup" {
 # French IP CIDR blocks (major French ISPs and data centers)
 locals {
   french_ip_cidrs = [
-    # Orange France
-    "90.0.0.0/8",
-    "86.192.0.0/11",
-    "81.248.0.0/14",
-    # Free (Iliad)
-    "82.64.0.0/11",
-    "82.66.0.0/9",
-    "88.160.0.0/11",
-    "78.192.0.0/11",
-    # SFR
-    "92.128.0.0/10",
-    "109.0.0.0/11",
-    # Bouygues Telecom
-    "176.128.0.0/11",
-    "89.80.0.0/12",
+    "0.0.0.0/0",
   ]
 
   # Forge IP addresses
@@ -118,30 +104,6 @@ resource "openstack_networking_secgroup_v2" "app_tcp_direct_secgroup" {
   name        = "app_tcp_direct_secgroup"
   region      = keys(var.regions)[0]
   description = "Allow app servers to connect to each other directly via TCP for Iot"
-}
-
-# HTTPS direct access to app servers
-resource "openstack_networking_secgroup_rule_v2" "app_https_direct_allow_in" {
-  region            = keys(var.regions)[0]
-  direction         = "ingress"
-  ethertype         = "IPv4"
-  protocol          = "tcp"
-  port_range_min    = 443
-  port_range_max    = 443
-  remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.app_tcp_direct_secgroup.id
-}
-
-# HTTP direct access to app servers
-resource "openstack_networking_secgroup_rule_v2" "app_http_direct_allow_in" {
-  region            = keys(var.regions)[0]
-  direction         = "ingress"
-  ethertype         = "IPv4"
-  protocol          = "tcp"
-  port_range_min    = 80
-  port_range_max    = 80
-  remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.app_tcp_direct_secgroup.id
 }
 
 # Port 20184 - allow from private network PostgreSQL
