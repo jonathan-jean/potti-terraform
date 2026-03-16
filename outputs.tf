@@ -28,7 +28,7 @@ output "app_server_private_ips" {
 
 output "bastion_public_ip" {
   description = "Public IP of the bastion host"
-  value       = openstack_compute_instance_v2.bastion.access_ip_v4
+  value       = openstack_networking_floatingip_v2.bastion_floating_ip.address
 }
 
 output "bastion_private_ip" {

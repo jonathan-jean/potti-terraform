@@ -25,7 +25,20 @@ resource "openstack_networking_secgroup_v2" "bastion_french_only_secgroup" {
 # French IP CIDR blocks (major French ISPs and data centers)
 locals {
   french_ip_cidrs = [
-    "0.0.0.0/0",
+    # Orange France
+    "90.0.0.0/8",
+    "86.192.0.0/11",
+    "81.248.0.0/14",
+    # Free (Iliad)
+    "82.64.0.0/11",
+    "88.160.0.0/11",
+    "78.192.0.0/11",
+    # SFR
+    "92.128.0.0/10",
+    "109.0.0.0/11",
+    # Bouygues Telecom
+    "176.128.0.0/11",
+    "89.80.0.0/12",
   ]
 
   # Forge IP addresses
