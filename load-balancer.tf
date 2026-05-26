@@ -25,6 +25,11 @@ resource "openstack_lb_listener_v2" "potti_loadbalancer_http_listener" {
   protocol_port   = 80
   loadbalancer_id = openstack_lb_loadbalancer_v2.potti_loadbalancer.id
   depends_on      = [openstack_lb_loadbalancer_v2.potti_loadbalancer]
+
+  insert_headers = {
+    X-Forwarded-For = "true"
+    X-Forwarded-Proto = "true"
+  }
 }
 
 resource "openstack_lb_l7policy_v2" "potti_http_to_https_policy" {
@@ -57,7 +62,7 @@ resource "openstack_lb_listener_v2" "potti_loadbalancer_https_listener" {
 resource "openstack_lb_pool_v2" "potti_loadbalancer_https_pool" {
   region      = local.primary_region
   name        = "potti_loadbalancer_https_pool"
-  protocol    = "HTTPS"
+  protocol    = "PROXYV2"
   lb_method   = "ROUND_ROBIN"
   listener_id = openstack_lb_listener_v2.potti_loadbalancer_https_listener.id
   depends_on  = [openstack_lb_listener_v2.potti_loadbalancer_https_listener]
@@ -75,16 +80,16 @@ resource "openstack_lb_member_v2" "potti_loadbalancer_https_member" {
   depends_on    = [openstack_lb_pool_v2.potti_loadbalancer_https_pool]
 }
 
-#resource "openstack_lb_monitor_v2" "potti_loadbalancer_https_monitor" {
-#  region         = local.primary_region
-#  name           = "potti_loadbalancer_https_monitor"
-#  pool_id        = openstack_lb_pool_v2.potti_loadbalancer_https_pool.id
-#  type           = "PING"
-#  delay          = 10
-#  timeout        = 2
-#  max_retries    = 3
-#  depends_on     = [openstack_lb_member_v2.potti_loadbalancer_https_member]
-#}
+resource "openstack_lb_monitor_v2" "potti_loadbalancer_https_monitor" {
+  region         = local.primary_region
+  name           = "potti_loadbalancer_https_monitor"
+  pool_id        = openstack_lb_pool_v2.potti_loadbalancer_https_pool.id
+  type           = "TCP"
+  delay          = 10
+  timeout        = 5
+  max_retries    = 3
+  depends_on     = [openstack_lb_member_v2.potti_loadbalancer_https_member]
+}
 
 # IoT Sensor TCP Listener on port 49984
 resource "openstack_lb_listener_v2" "potti_loadbalancer_iot_listener" {

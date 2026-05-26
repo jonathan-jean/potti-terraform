@@ -1,0 +1,14 @@
+{
+  "CORSRules": [
+    {
+      "AllowedMethods": ["GET"],
+      "AllowedOrigins": ["*"],
+      "AllowedHeaders": ["*"]
+    },
+    {
+      "AllowedMethods": ["PUT", "POST"],
+      "AllowedOrigins": ["https://potti.co", "https://*.potti.co", "https://potti.fr", "https://*.potti.fr"],
+      "AllowedHeaders": ["*"]
+    }
+  ]
+}

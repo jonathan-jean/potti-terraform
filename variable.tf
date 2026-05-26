@@ -249,7 +249,7 @@ variable "s3_cors_rules" {
     },
     {
       AllowedMethods = ["PUT", "POST"]
-      AllowedOrigins = ["https://potti.co", "https://staging.potti.co"]
+      AllowedOrigins = ["https://potti.co", "https://*.potti.co"]
       AllowedHeaders = ["*"]
     }
   ]
