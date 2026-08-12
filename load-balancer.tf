@@ -80,15 +80,18 @@ resource "openstack_lb_member_v2" "potti_loadbalancer_https_member" {
   depends_on    = [openstack_lb_pool_v2.potti_loadbalancer_https_pool]
 }
 
+# PROXYV2 pool + nginx `listen ... ssl proxy_protocol`: probes must send a
+# PROXY v2 header, then a TLS ClientHello. TLS-HELLO does that; HTTPS does not
+# (it speaks HTTP-over-TLS as if the pool were HTTPS).
 resource "openstack_lb_monitor_v2" "potti_loadbalancer_https_monitor" {
-  region         = local.primary_region
-  name           = "potti_loadbalancer_https_monitor"
-  pool_id        = openstack_lb_pool_v2.potti_loadbalancer_https_pool.id
-  type           = "TCP"
-  delay          = 10
-  timeout        = 5
-  max_retries    = 3
-  depends_on     = [openstack_lb_member_v2.potti_loadbalancer_https_member]
+  region      = local.primary_region
+  name        = "potti_loadbalancer_https_monitor"
+  pool_id     = openstack_lb_pool_v2.potti_loadbalancer_https_pool.id
+  type        = "TLS-HELLO"
+  delay       = 10
+  timeout     = 5
+  max_retries = 3
+  depends_on  = [openstack_lb_member_v2.potti_loadbalancer_https_member]
 }
 
 # IoT Sensor TCP Listener on port 49984
